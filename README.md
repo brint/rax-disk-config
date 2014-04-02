@@ -1,4 +1,5 @@
 rax-disk-config
 ===============
 
-Wrapper cookbook for handling disk configuration on Rackspace Cloud Servers
+This cookbook depends on the community `lvm` cookbook. It will format and
+mount ephemeral storage if it exists on the server.
