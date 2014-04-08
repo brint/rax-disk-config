@@ -18,9 +18,13 @@
 # limitations under the License.
 #
 
-include_recipe 'lvm'
-
 if File.exist?(node['rax']['disk_config']['physical_volume'])
+
+  include_recipe 'lvm'
+
+  node['rax']['disk_config']['packages'].each do |pkg|
+    package pkg
+  end
 
   directory node['rax']['disk_config']['mount_point'] do
     owner 'root'

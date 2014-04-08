@@ -5,3 +5,7 @@ default['rax']['disk_config']['size'] = '100%VG'
 default['rax']['disk_config']['filesystem'] = 'xfs'
 default['rax']['disk_config']['mount_point'] = '/mnt/volume'
 default['rax']['disk_config']['mount_options'] = 'rw,noatime,nodiratime'
+case node['platform_family']
+when 'debian'
+  default['rax']['disk_config']['packages'] = ['xfsprogs']
+end
