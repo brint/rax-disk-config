@@ -18,8 +18,20 @@
 # limitations under the License.
 #
 
-if File.exist?(node['rax']['disk_config']['physical_volume'])
+volumes = %w()
 
+node['block_device'].each do |k, v|
+  if k.include?(node['rax']['disk_config']['disk_prefix']) &&
+                    node['rax']['disk_config']['data_disks'].include?(k[-1, 1])
+    dev_name = File.join('/dev', "#{k}1")
+    unless node['filesystem'][dev_name]
+      volumes.push(dev_name)
+      end
+    end
+  end
+end
+
+unless physical_volumes.empty?
   include_recipe 'lvm'
 
   node['rax']['disk_config']['packages'].each do |pkg|
@@ -34,7 +46,7 @@ if File.exist?(node['rax']['disk_config']['physical_volume'])
   end
 
   lvm_volume_group node['rax']['disk_config']['volume_group'] do
-    physical_volumes [node['rax']['disk_config']['physical_volume']]
+    physical_volumes volumes
 
     logical_volume node['rax']['disk_config']['logical_volume'] do
       size node['rax']['disk_config']['size']
@@ -43,8 +55,4 @@ if File.exist?(node['rax']['disk_config']['physical_volume'])
                   options: node['rax']['disk_config']['mount_options']
     end
   end
-
-else
-  block_device = node['rax']['disk_config']['physical_volume']
-  log "Block device #{block_device} does not exist."
 end
