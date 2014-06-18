@@ -26,12 +26,11 @@ node['block_device'].each do |k, v|
     dev_name = File.join('/dev', "#{k}1")
     unless node['filesystem'][dev_name]
       volumes.push(dev_name)
-      end
     end
   end
 end
 
-unless physical_volumes.empty?
+unless volumes.empty?
   include_recipe 'lvm'
 
   node['rax']['disk_config']['packages'].each do |pkg|
