@@ -46,12 +46,14 @@ unless volumes.empty?
 
   lvm_volume_group node['rax']['disk_config']['volume_group'] do
     physical_volumes volumes
-
     logical_volume node['rax']['disk_config']['logical_volume'] do
       size node['rax']['disk_config']['size']
       filesystem node['rax']['disk_config']['filesystem']
       mount_point location: node['rax']['disk_config']['mount_point'],
                   options: node['rax']['disk_config']['mount_options']
+      not_if {File.exist?(File.join('/dev',
+                          node['rax']['disk_config']['volume_group'],
+                          node['rax']['disk_config']['logical_volume']))}
     end
   end
 end
